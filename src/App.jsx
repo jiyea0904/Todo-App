@@ -50,11 +50,49 @@ function TodoList({ todoList, setTodoList }) {
   );
 }
 
+function TodoList({ todoList, setTodoList }) {
+  return (
+    <ul>
+      {todoList.map((todo) => (
+        <Todo key={todo.id} todo={todo} setTodoList={setTodoList} />
+      ))}
+    </ul>
+  );
+}
+
 function Todo({ todo, setTodoList }) {
-  const [inputValue, setInputValue] = useState("");
+  const [isEditing, setIsEditing] = useState(false);
+
   return (
     <li>
-      {todo.content}
+      {isEditing ? (
+        <EditTodo
+          todo={todo}
+          setTodoList={setTodoList}
+          setIsEditing={setIsEditing}
+        />
+      ) : (
+        <>
+          {todo.content}
+          <button onClick={() => setIsEditing(true)}>수정</button>
+          <button
+            onClick={() => {
+              setTodoList((prev) => prev.filter((el) => el.id !== todo.id));
+            }}
+          >
+            삭제
+          </button>
+        </>
+      )}
+    </li>
+  );
+}
+
+function EditTodo({ todo, setTodoList, setIsEditing }) {
+  const [inputValue, setInputValue] = useState(todo.content);
+
+  return (
+    <>
       <input
         value={inputValue}
         onChange={(event) => setInputValue(event.target.value)}
@@ -66,20 +104,13 @@ function Todo({ todo, setTodoList }) {
               el.id === todo.id ? { ...el, content: inputValue } : el
             )
           );
+          setIsEditing(false);
         }}
       >
-        수정
+        저장
       </button>
-      <button
-        onClick={() => {
-          setTodoList((prev) => {
-            return prev.filter((el) => el.id !== todo.id);
-          });
-        }}
-      >
-        삭제
-      </button>
-    </li>
+      <button onClick={() => setIsEditing(false)}>취소</button>
+    </>
   );
 }
 
