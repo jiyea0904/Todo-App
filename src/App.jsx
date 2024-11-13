@@ -1,25 +1,29 @@
 import { useState } from "react";
+import Container from './Container';
 import './App.css';
 
 function App() {
   const [todoList, setTodoList] = useState([
-    { id: 0, content: '밥먹기', isCompleted: false },
-    { id: 1, content: '코딩 공부하기', isCompleted: false },
+    { id: 0, content: "123", isDone: false },
+    { id: 1, content: "코딩 공부하기", isDone: false },
+    { id: 2, content: "잠 자기", isDone: false },
   ]);
 
   return (
-    <>
+    <Container>
+      <h1 className="todoTitle">To Do List</h1>
       <TodoInput todoList={todoList} setTodoList={setTodoList} />
       <TodoList todoList={todoList} setTodoList={setTodoList} />
-    </>
+    </Container>
   );
 }
 
 function TodoInput({ todoList, setTodoList }) {
   const [inputValue, setInputValue] = useState('');
   return (
-    <div>
+    <div className="new-todo-input">
       <input 
+        placeholder="Write your todo"
         value={inputValue} 
         onChange={(event) => setInputValue(event.target.value)} 
       />
@@ -28,14 +32,14 @@ function TodoInput({ todoList, setTodoList }) {
           const newTodo = {
             id: Number(new Date()),
             content: inputValue,
-            isCompleted: false
+            isDone: false
           };
           const newTodoList = [...todoList, newTodo];
           setTodoList(newTodoList);
           setInputValue("");
         }}
       >
-        추가
+        Add
       </button>
     </div>
   );
@@ -43,7 +47,7 @@ function TodoInput({ todoList, setTodoList }) {
 
 function TodoList({ todoList, setTodoList }) {
   return (
-    <ul>
+    <ul className="todo-list">
       {todoList.map((todo) => (
         <Todo key={todo.id} todo={todo} setTodoList={setTodoList} />
       ))}
@@ -57,16 +61,16 @@ function Todo({ todo, setTodoList }) {
   const handleCheckboxChange = () => {
     setTodoList((prev) =>
       prev.map((el) =>
-        el.id === todo.id ? { ...el, isCompleted: !el.isCompleted } : el
+        el.id === todo.id ? { ...el, isDone: !el.isDone } : el
       )
     );
   };
 
   return (
-    <li style={{ textDecoration: todo.isCompleted ? "line-through" : "none" }}>
+    <li style={{ textDecoration: todo.isDone ? "line-through" : "none" }}>
       <input
         type="checkbox"
-        checked={todo.isCompleted}
+        checked={todo.isDone}
         onChange={handleCheckboxChange}
       />
       {isEditing ? (
@@ -78,14 +82,16 @@ function Todo({ todo, setTodoList }) {
       ) : (
         <>
           {todo.content}
-          <button onClick={() => setIsEditing(true)}>수정</button>
-          <button
-            onClick={() => {
-              setTodoList((prev) => prev.filter((el) => el.id !== todo.id));
-            }}
-          >
-            삭제
-          </button>
+          <div className="btn-wrap">
+            <button className="btn-edit" onClick={() => setIsEditing(true)}>수정</button>
+            <button className="btn-delete"
+              onClick={() => {
+                setTodoList((prev) => prev.filter((el) => el.id !== todo.id));
+              }}
+            >
+              삭제
+            </button>
+          </div>
         </>
       )}
     </li>
@@ -96,7 +102,7 @@ function EditTodo({ todo, setTodoList, setIsEditing }) {
   const [inputValue, setInputValue] = useState(todo.content);
 
   return (
-    <>
+    <div className="edit-todo-input">
       <input
         value={inputValue}
         onChange={(event) => setInputValue(event.target.value)}
@@ -108,13 +114,13 @@ function EditTodo({ todo, setTodoList, setIsEditing }) {
               el.id === todo.id ? { ...el, content: inputValue } : el
             )
           );
-          setIsEditing(false); // 수정 모드 종료
+          setIsEditing(false);
         }}
       >
-        저장
+        Edit
       </button>
-      <button onClick={() => setIsEditing(false)}>취소</button>
-    </>
+      <button onClick={() => setIsEditing(false)}>Cancle</button>
+    </div>
   );
 }
 
